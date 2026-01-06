@@ -28,3 +28,23 @@ with Session(engine) as session:
 
     session.add_all([author1, author2, book1, book2, book3])
     session.commit()
+
+with Session(engine) as session:
+    # statement = select(Book).where(Book.title == "First Book")
+    # statement = select(Book, Author).join(Author)
+    # books_with_authors = session.exec(statement).all()
+    # for book, author in books_with_authors:
+    #     print(f"Book: {book.title}, Author: {author.name}")
+    book_to_update = session.exec(select(Book).where(Book.title == "Second Book")).first()
+    if book_to_update:
+        book_to_update.content = "Updated content of the second book"
+        session.add(book_to_update)
+        session.commit()
+        session.refresh(book_to_update)
+        print(f"Updated Book: {book_to_update.title}, New Content: {book_to_update.content}")
+
+    book_to_delete = session.exec(select(Book).where(Book.title == "Third Book")).first()
+    if book_to_delete:
+        session.delete(book_to_delete)
+        session.commit()
+        print(f"Deleted Book: {book_to_delete.title}")
